@@ -130,7 +130,7 @@ AUTHENTICATION_BACKENDS = (
     'social_core.backends.strava.StravaOAuth',
     'django.contrib.auth.backends.ModelBackend',
 )
-LOGIN_REDIRECT_URL = '/connected/'
+
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/connected/'
 SOCIAL_AUTH_STRAVA_SCOPE = ['activity:read_all']
 SOCIAL_AUTH_STRAVA_KEY = '97319' #Client ID from API Application
