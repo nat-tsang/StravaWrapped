@@ -1,13 +1,12 @@
 from social_django.models import UserSocialAuth
-import requests
 import pandas as pd
 from pandas.io.json import json_normalize
 import polyline
 import time
+import requests
 
 class API():
-    def get_info():
-        user = requests.user # Pulls in the Strava User data
+    def get_info(user):
         strava_login = user.social_auth.get(provider='strava') # Strava login
         access_token = strava_login.extra_data['access_token'] # Strava Access token
         activites_url = "https://www.strava.com/api/v3/athlete/activities"

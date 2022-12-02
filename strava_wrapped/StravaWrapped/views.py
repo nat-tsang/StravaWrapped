@@ -8,17 +8,18 @@ from .api_service import *
 
 def base_map(request):
     # Make your map object
-    main_map = folium.Map(location=[43.45, -80.476], zoom_start = 12) # Create base map
-    main_map_html = main_map._repr_html_() # Get HTML for website
+    # main_map = folium.Map(location=[43.45, -80.476], zoom_start = 12) # Create base map
+    # main_map_html = main_map._repr_html_() # Get HTML for website
 
-    context = {
-        "main_map":main_map_html
-    }
-    return render(request, 'index.html', context)
+    # context = {
+    #     "main_map":main_map_html
+    # }
+    return render(request, 'connected.html')
 
 def connected_overview(request):
     api_service = API
-    activities_df = api_service.get_info()
+    user = request.user
+    activities_df = api_service.get_info(user)
     run_df, bike_df, swim_df = api_service.reduce_df(activities_df)
 
     #run info
@@ -34,23 +35,8 @@ def connected_map(request):
     # Make your map object
     main_map = folium.Map(location=[43.45, -80.476], zoom_start = 12) # Create base map
     user = request.user # Pulls in the Strava User data
-    strava_login = user.social_auth.get(provider='strava') # Strava login
-    access_token = strava_login.extra_data['access_token'] # Strava Access token
-    activites_url = "https://www.strava.com/api/v3/athlete/activities"
-
-    # Get activity data
-    header = {'Authorization': 'Bearer ' + str(access_token)}
-    activity_df_list = []
-    for n in range(5):  # Change this to be higher if you have more than 1000 activities
-        param = {'per_page': 200, 'page': n + 1}
-
-        activities_json = requests.get(activites_url, headers=header, params=param).json()
-        if not activities_json:
-            break
-        activity_df_list.append(pd.json_normalize(activities_json))
-
-    # Get Polyline Data
-    activities_df = pd.concat(activity_df_list)
+    api_service = API
+    activities_df = api_service.get_info(user)
     activities_df = activities_df.dropna(subset=['map.summary_polyline'])
     activities_df['polylines'] = activities_df['map.summary_polyline'].apply(polyline.decode)
 
