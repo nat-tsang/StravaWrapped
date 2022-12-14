@@ -1,4 +1,4 @@
-from social_django.models import UserSocialAuth
+from social_django.models import UserSocialAuth 
 import pandas as pd
 from pandas.io.json import json_normalize
 import polyline
@@ -32,30 +32,45 @@ class API():
         activities_df = activities_df.dropna(subset=['map.summary_polyline'])
         activities_df['polylines'] = activities_df['map.summary_polyline'].apply(polyline.decode)
 
-        activities_df['start_date_local'] = pd.to_datetime(activities_df['start_date_local'])
+        activities_df['start_date_local'] = pd.to_datetime(activities_df['start_date_local'], format='%Y-%m-%d %H:%M:%S')
         activities_df['start_date_local'] = activities_df['start_date_local'].dt.date
-        activities_df['year'] = activities_df['start_date_local'].dt.year
+        activities_df['year'] = pd.DatetimeIndex(activities_df['start_date_local']).year
 
-        activities_df = activities_df[activities_df['year'] == '2022']
+        activities_df = activities_df[activities_df['year'] == 2022]
 
         activities_df['distance'] = activities_df['distance']/1000
 
         #convert time-distance to pace per km
 
         activities_df['avg_pace'] = activities_df['moving_time']/activities_df['distance']
-        activities_df['avg_pace'] = time.strftime('%M:%S', time.gmtime(activities_df['avg_pace']))
+        new_pace = []
+        for i in activities_df['avg_pace']:
+            new_pace.append(float(time.strftime('%M.%S', time.gmtime(i))))
+        activities_df['avg_pace'] = new_pace
 
-        run_df = activities_df[activities_df['sport_type'] == 'Run']
-        bike_df = activities_df[activities_df['sport_type'] == 'Ride']
-        swim_df = activities_df[activities_df['sport_type'] == 'Swim']
+        run_df = activities_df[activities_df['sport_type'] == 'Run'].reset_index(drop=True)
+        bike_df = activities_df[activities_df['sport_type'] == 'Ride'].reset_index(drop=True)
+        swim_df = activities_df[activities_df['sport_type'] == 'Swim'].reset_index(drop=True)
         return run_df, bike_df, swim_df
     
-    def stats(activities_df):
-        stats_idx = pd.DataFrame(columns=['Longest Distance', 'Fastest Pace', 'Longest Moving Time', 'Most Kudos', 'Most Achievements'])
-        stats_idx['Longest Distance'] = activities_df.index[max(activities_df['distance'])]
-        stats_idx['Fastest Pace'] = activities_df.index[min(activities_df['avg_pace'])]
-        stats_idx['Longest Moving Time'] = activities_df.index[max(activities_df['moving_time'])]
-        stats_idx['Most Kudos'] = activities_df.index[max(activities_df['kudos_count'])]
-        stats_idx['Most Achievements'] = activities_df.index[max(activities_df['achievement_count'])]
+    def create_stats(run_df,bike_df,swim_df, stats):
+        runMin_idx = run_df[['avg_pace']].idxmin()
+        runMax_idx = run_df[['distance','moving_time','kudos_count','achievement_count','max_speed']].idxmax()
+        bikeMin_idx = bike_df[['average_speed']].idxmin()
+        bikeMax_idx = bike_df[['distance','moving_time','kudos_count','achievement_count','max_speed']].idxmax()
+        swimMin_idx = swim_df[['avg_pace']].idxmin()
+        swimMax_idx = swim_df[['distance','moving_time','kudos_count','achievement_count','max_speed']].idxmax()
 
-        return stats_idx
+        stats['longest_run'] = run_df.iloc[runMax_idx['distance']].to_dict() 
+        stats['longest_bike'] = bike_df.iloc[bikeMax_idx['distance']].to_dict()
+        stats['longest_swim'] = swim_df.iloc[swimMax_idx['distance']].to_dict()
+
+        stats['fastest_run'] = run_df.iloc[runMin_idx['avg_pace']].to_dict()
+        stats['fastest_bike'] = bike_df.iloc[bikeMin_idx['average_speed']].to_dict()
+        stats['fastest_swim'] = swim_df.iloc[swimMin_idx['avg_pace']].to_dict()
+
+        stats['moving_runTime'] = run_df.iloc[runMax_idx['moving_time']].to_dict()
+        stats['moving_bikeTime'] = bike_df.iloc[bikeMax_idx['moving_time']].to_dict()
+        stats['moving_swimTime'] = swim_df.iloc[swimMax_idx['moving_time']].to_dict()
+
+        return stats
