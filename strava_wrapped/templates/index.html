@@ -5,7 +5,7 @@
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css" type="text/css"/>
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -23,7 +23,7 @@
   <div class="collapse navbar-collapse" id="navbarNav">
     <!--Begin Strava Connect Button-->
     <form class="form-inline my-2 my-lg-0">
-      <a href="{% url 'social:begin' 'strava' %}" class="btn btn-primary" role="button" aria-disabled="true">Connect to
+      <a href="{% url 'social:begin' 'strava' %}" class="btn btn-dark" role="button" aria-disabled="true">Connect to
         Strava</a>
     </form>
     <!--End Strava Connect Button-->
@@ -33,9 +33,66 @@
 
 <!-- Begin Run Stats Container-->
 <div class="container">
-  <div class="row mt-4">
-    <div class="col-md-10 offset-md-1">
-      {{stats.longest_run.name}}
+  <div class="row">
+    <div class="col-md-4">
+      <div class="blog-card">
+        <div class="blog-container">
+          <span class="badge badge-dark">Furthest Distance</span>
+          <h4><b>{{stats.longest_run.name}}</b></h4>
+          <hr>
+          <span><b>Distance</b></span>
+          <span class="data">{{stats.longest_run.distance}}</span>
+          <br>
+          <span><b>Pace</b></span>
+          <span class="data">{{stats.longest_run.avg_pace}}</span>
+          <br>
+          <span><b>Moving Time</b></span>
+          <span class="data">{{stats.longest_run.moving_time}}</span>
+          <br>
+          <span><b>Date</b></span>
+          <span class="data">{{stats.longest_run.start_date_local}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="blog-card">
+        <div class="blog-container">
+          <span class="badge badge-dark">Fastest Pace</span>
+          <h4><b>{{stats.fastest_run.name}}</b></h4>
+          <hr>
+          <span><b>Distance</b></span>
+          <span class="data">{{stats.fastest_run.distance}}</span>
+          <br>
+          <span><b>Pace</b></span>
+          <span class="data">{{stats.fastest_run.avg_pace}}</span>
+          <br>
+          <span><b>Moving Time</b></span>
+          <span class="data">{{stats.fastest_run.moving_time}}</span>
+          <br>
+          <span><b>Date</b></span>
+          <span class="data">{{stats.fastest_run.start_date_local}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="blog-card">
+        <div class="blog-container">
+          <span class="badge badge-dark">Longest Time</span>
+          <h4><b>{{stats.moving_runTime.name}}</b></h4>
+          <hr>
+          <span><b>Distance</b></span>
+          <span class="data">{{stats.moving_runTime.distance}}</span>
+          <br>
+          <span><b>Pace</b></span>
+          <span class="data">{{stats.moving_runTime.avg_pace}}</span>
+          <br>
+          <span><b>Moving Time</b></span>
+          <span class="data">{{stats.moving_runTime.moving_time}}</span>
+          <br>
+          <span><b>Date</b></span>
+          <span class="data">{{stats.moving_runTime.start_date_local}}</span>
+        </div>
+      </div>
     </div>
   </div>
 </div>
