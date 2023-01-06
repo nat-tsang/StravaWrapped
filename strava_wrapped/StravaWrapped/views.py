@@ -1,21 +1,21 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.http import JsonResponse
 import pandas as pd
+from json import dumps
 import requests
 import folium
 import polyline
 from .api_service import *
+from .plots import *
 from django.views.generic import TemplateView
 
 def base_map(request):
-    # Make your map object
-    # main_map = folium.Map(location=[43.45, -80.476], zoom_start = 12) # Create base map
-    # main_map_html = main_map._repr_html_() # Get HTML for website
-
-    # context = {
-    #     "main_map":main_map_html
-    # }
-    return render(request, 'connected.html')
+    dict = [{"distance":18.0295,"days":364},{"distance":6.4684,"days":362}]
+    plot_service = Plots
+    plot_data = plot_service.distance_date(dict)
+    context = {'plot_data':plot_data}
+    return render(request, 'connected.html', context)
 
 def connected_overview(request):
     api_service = API
@@ -50,8 +50,18 @@ def connected_map(request):
     }
     return main_map_html
 
+def connected_plot(request):
+    api_service = API
+    user = request.user
+    activities_df = api_service.get_info(user)
+    run_df, bike_df, swim_df = api_service.reduce_df(activities_df)
+    plot_service = Plots
+    plot_data = plot_service.distance_date(run_df)
+    return plot_data
+
 def dashboard_view(request):
-    dump1 = connected_overview(request)  # note you don't use request, *args, **kwargs so you don't need to add them as params to get_dept()
-    dump2 = connected_map(request)  # idem
-    context = {'stats': dump1, 'main_map': dump2}
+    dump1 = connected_overview(request)  
+    dump2 = connected_map(request)  
+    dump3 = connected_plot(request)
+    context = {'stats': dump1, 'main_map': dump2, 'plot_view': dump3}
     return render(request, 'index.html', context)
