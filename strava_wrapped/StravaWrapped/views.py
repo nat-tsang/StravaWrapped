@@ -11,11 +11,7 @@ from .plots import *
 from django.views.generic import TemplateView
 
 def base_map(request):
-    dict = [{"distance":18.0295,"days":364},{"distance":6.4684,"days":362}]
-    plot_service = Plots
-    plot_data = plot_service.distance_date(dict)
-    context = {'plot_data':plot_data}
-    return render(request, 'connected.html', context)
+    return render(request, 'connected.html')
 
 def connected_overview(request):
     api_service = API
@@ -31,7 +27,7 @@ def connected_overview(request):
 
 def connected_map(request):
     # Make your map object
-    main_map = folium.Map(location=[43.45, -80.476], zoom_start = 12) # Create base map
+    main_map = folium.Map(width=500,height=500,location=[43.45, -80.476], zoom_start = 12) # Create base map
     user = request.user # Pulls in the Strava User data
     api_service = API
     activities_df = api_service.get_info(user)

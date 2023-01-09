@@ -5,7 +5,7 @@
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="stylesheet" href="./style.css" type="text/css" />
+  <link rel="stylesheet" href="style.css" type="text/css" />
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -101,11 +101,15 @@
 <!--Begin Map Container-->
 <div class="container">
   <div class="row mt-4">
-    <div class="col-md-10 offset-md-1">
+    <div class="col-md">
+      <h4><b>Map of all Activities</b></h4>
       {{ main_map|safe }}
     </div>
-    <div class="col-md-10 offset-md-1">
-      {{ plot_data }}
+    <div class="col-md">
+      <h4><b>Distance vs Date Graph</b></h4>
+      {% autoescape off %}
+      {{ plot_view }}
+      {% endautoescape %}
     </div>
   </div>
 </div>

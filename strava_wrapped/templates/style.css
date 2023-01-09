@@ -44,3 +44,20 @@ html, body {
     text-align: left;
     border-radius:5px !important;
 }
+
+.box {
+    height: 200px;
+    padding-right: 260px;
+}    
+
+.box .left {
+    float: left;
+    height: 200px;
+    width: 100%;
+}
+
+.box .right {
+    height: 200px;
+    width: 260px;
+    margin-right: -260px;
+}

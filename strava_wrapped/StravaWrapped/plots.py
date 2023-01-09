@@ -1,20 +1,23 @@
-import plotly
-import plotly.express as px
+from plotly.offline import plot
+import plotly.graph_objs as go
 
 import pandas as pd
 import datetime as dt
 
 class Plots():
     def distance_date(df):
-        activity_df = df
-        distance_date = pd.DataFrame()
-        distance_date['distance'] = activity_df['distance']
-        distance_date['days'] = [(d - dt.date(2022,1,1)).days for d in activity_df['start_date_local']]
-        fig = px.scatter(distance_date, x='days', y='distance', labels={
-                     "days": "Day of Year",
-                     "distance": "Distance (km)"
-                 }, title='Distance Ran vs Date')
-        div = plotly.offline.plot(fig, include_plotlyjs=False, output_type='div')
+        df['days'] = [(d - dt.date(2022,1,1)).days for d in df['start_date_local']]
+        fig = go.Figure()
+        scatter = go.Scatter(x=df['days'], y=df['distance'], mode='markers',
+                     opacity=0.8, marker_color='green')
+        fig.update_layout(
+            autosize=False,
+            width=500,
+            height=300,
+            xaxis_title="Date (days)",
+            yaxis_title="Distance (km)")
+        fig.add_trace(scatter)
+        div = plot(fig, output_type='div')
         return div
         
 
